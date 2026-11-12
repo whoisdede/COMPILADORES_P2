@@ -1,0 +1,37 @@
+A construção de analisadores descendentes e ascendentes é auxiliada por duas funções, FIRST e FOLLOW, associadas a  uma gramática G. Durante a análise descendente, FIRST e FOLLOW nos permitem escolher qual produção aplicar, com base no próximo símbolo da entrada. Durante a recuperação de erro no modo pânico, conjuntos de tokens produzidos por FOLLOW  podem ser usados como tokens de sincronismo.
+
+Defina FIRST(α), onde α é qualquer cadeia de símbolos da gramática, como sendo o conjunto de símbolos terminais que iniciam as cadeias derivadas de α. Se α ⇒* ε, então ε também está em FIRST(α). Por exemplo, na figura abaixo, A ⇒*  c γ, portanto c está em FIRST(A).
+
+
+
+Para ter uma ideia de como FIRST pode ser usado durante o reconhecimento preditivo, considere as duas produções-A, A  → α | β, onde FIRST(α) e FIRST(β) são conjuntos disjuntos. Podemos, então, escolher uma dessas alternativas de A examinando o próximo símbolo de entrada a, desde que a só possa estar em FIRST(α) ou FIRST(β), mas nunca em ambos. Por exemplo, se a estiver em FIRST(β), escolha a produção A → β.
+
+Defina FOLLOW(A), para o não-terminal A, como sendo o conjunto de terminais a que podem aparecer imediatamente  à direita de A em alguma forma sentencial, ou seja, o conjunto de terminais a tais que exista uma derivação na forma S ⇒  αAaβ, para algum α e β. Observe que pode haver símbolos entre A e a, em algum momento durante a derivação, mas, nesse caso, eles derivaram ε e desapareceram. Além disso, se A for o símbolo não-terminal mais à direita em alguma forma sentencial, então $ estará em FOLLOW(A). Lembre-se: $ é um símbolo "marcador de fim da cadeia de  entrada", e, como tal, não faz parte de nenhuma gramática.
+
+Para calcular o FIRST(X) de todos os símbolos X da gramática, aplique as seguintes regras até que não haja mais terminais, ou ε, que possam ser acrescentados a algum dos conjuntos FIRST.
+
+SE X é um símbolo terminal, ENTÃO FIRST(X) = { X }.
+SE X é um símbolo não-terminal e X → Y1Y2... Yk é uma produção para algum k ≥ 1, ENTÃO acrescente a a FIRST(X) se, para algum i, a estiver em FIRST(Yi), e ε estiver em todos os FIRST(Y1),...,FIRST(Yi-1); ou seja, Y1 ...Yi-1 ⇒ ε. SE ε está em FIRST(Yj) para todo j = 1, 2,..., k, ENTÃO adicione ε a FIRST(X). Por exemplo, tudo em FIRST(Y1) certamente está em FIRST(X). SE Y1 não derivar ε, ENTÃO não acrescenta-se mais nada a FIRST(X), mas SE Y1 ⇒ ε, ENTÃO  adicionamos FIRST(Y2), e assim por diante.
+SE X → ε é uma produção, ENTÃO acrescente ε a FIRST(X).
+Agora, podemos calcular FIRST para qualquer cadeia X1 X2... Xn, da forma seguinte forma:
+
+Adicione a FIRST(X1X2... Xn) todos  os símbolos não-ε de FIRST(X1). Inclua também os símbolos não-ε de FIRST(X2), se ε estiver em FIRST(X1); os símbolos não-ε de FIRST(X3), se ε estiver em FIRST(X1) e em FIRST(X2); e assim por diante. Finalmente, acrescente  a FIRST(X1X2...Xn)  se, para todo i,  estiver em FIRST(Xi).  Para calcular o FOLLOW(A) para todos os não-terminais A, aplique as seguintes regras até que nada mais possa ser acrescentado a nenhum dos conjuntos FOLLOW. 
+
+Coloque $ em FOLLOW(S), onde S é o símbolo inicial da gramática, e $ é o marcador de fim da entrada ou fim de arquivo. 
+Se houver uma produção A → αBβ, então tudo em FIRST(β), exceto ε, está em FOLLOW(B). 
+Se houver uma produção A → αB, ou uma produção A → αBβ, onde o FIRST(β) contém ε, então inclua o FOLLOW(A) em FOLLOW(B).
+EXEMPLO:
+
+
+
+FIRST( F ) = FIRST( T ) = FIRST( E ) = { ( , id }
+
+FIRST( E'  ) = { + , ε }
+
+FIRST( T'  ) = { * , ε }
+
+FOLLOW( E  ) = FOLLOW( E'  ) = { ) , $ }
+
+FOLLOW( T  ) = FOLLOW( T'  ) = { +, ) , $ }
+
+FOLLOW( F ) = { +, *,  ) , $ }
